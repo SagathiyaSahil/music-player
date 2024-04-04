@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" />
+    <title>Music Player</title>
+    <!-- CSS styles -->
+    <style>
+        /* Your existing CSS styles */
+        /* Body styles */
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #c9ced3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Raleway", sans-serif;
+            font-size: 1.4rem;
+            transition: all 0.25s;
+        }
+
+        /* Main container styles */
+        .main-container {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 2.5rem;
+            margin: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+            width: 30%;
+            height: auto;
+        }
+
+        /* Image container styles */
+        .img-container {
+            border-radius: 100%;
+            width: 50%;
+            height: auto;
+        }
+
+        /* Buttons styles */
+        .buttons {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .playpause-track,
+        .prev-track,
+        .next-track {
+            padding: 25px;
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        .playpause-track:hover,
+        .prev-track:hover,
+        .next-track:hover {
+            opacity: 1.0;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Slider container styles */
+        .slider_container {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+
+        /* Volume icon styles */
+        .slider_container i {
+            margin: 0 0.5rem;
+        }
+
+        /* Input range styles */
+        .slider_container input[type="range"] {
+            width: 100px;
+            appearance: none;
+            background: #f7f7f7;
+            height: 6px;
+            border-radius: 5px;
+            outline: none;
+            margin: 0 0.5rem;
+        }
+
+        /* Title styles */
+        .title {
+            display: flex;
+            flex-direction: row;
+            margin: 0px;
+            padding: 0px;
+            justify-content: left;
+        }
+
+        .title h4,
+        .title h5 {
+            margin-right: 10px;
+        }
+
+        /* Slider container 1 styles */
+        .slider_container1 {
+            width: 90%;
+            margin-top: 20px;
+        }
+
+        .slider_container1 input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        /* Library container styles */
+        .library-container {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 2.5rem;
+            margin: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+            width: 30%;
+            height: auto;
+        }
+
+        .library-container h2 {
+            margin-bottom: 10px;
+        }
+
+        .library-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .library-list li {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .library-list li a {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .library-list li a:hover {
+            color: blue;
+        }
+
+        /* Like button styles */
+        .like-btn {
+            background-color: #f29ee5c8;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            border-radius: 3px;
+            width: 50px;
+            height: 20px;
+        }
+
+        .like-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Remove button styles */
+        .Remove-btn {
+            background-color: #ff4646a8;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            border-radius: 3px;
+            width: 60px;
+            height: 20px;
+        }
+
+        .Remove-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Play button styles */
+        .play-btn {
+            background-color: #75c9f3;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            border-radius: 3px;
+            width: 50px;
+            height: 20px;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Liked songs container styles */
+        .liked-songs {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 2.5rem;
+            margin: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+            width: 30%;
+            height: auto;
+        }
+
+        .liked-songs h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .liked-list {
+            list-style-type: none;
+            padding: 0;
+            width: 90%;
+            height: auto;
+        }
+
+        .liked-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .liked-list li:last-child {
+            border-bottom: none;
+        }
+
+        .liked-list li:hover {
+            background-color: rgb(138, 220, 146);
+            border-radius: 5px;
+            border: none;
+        }
+
+        #showli {
+            width: 100%;
+            background-color: #75c9f3;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            height: 40px;
+        }
+
+        #showli:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main container for the music player -->
+    <div class="main-container">
+        <!-- Image container for album artwork -->
+        <img src="img1.jpg" alt="Error" class="img-container">
+
+        <!-- Title container for artist and song name -->
+        <div class="title">
+            <h4 id="artistName">Artist Name</h4>
+            <h5 id="songName">Song Name</h5>
+        </div>
+
+        <!-- Slider container for current playback time -->
+        <div class="slider_container1">
+            <div class="current-time">00:00 / 00.00</div>
+            <input type="range" min="0" max="100" value="0" class="seek_slider" onchange="seekTo()">
+        </div>
+
+        <!-- Slider container for volume control -->
+        <div class="slider_container2">
+            <i class="fa fa-volume-down"></i>
+            <input type="range" min="0" max="100" value="100" class="volume_slider" onchange="setVolume()">
+            <i class="fa fa-volume-up"></i>
+        </div>
+
+        <!-- Button container for playback control -->
+        <div class="buttons">
+            <!-- Button to skip to previous track -->
+            <div class="prev-track">
+                <i class="fa fa-step-backward fa-1x"></i>
+            </div>
+            <!-- Button to play/pause track -->
+            <div class="playpause-track">
+                <i class="fa fa-play-circle fa-3x"></i>
+            </div>
+            <!-- Button to skip to next track -->
+            <div class="next-track">
+                <i class="fa fa-step-forward fa-1x"></i>
+            </div>
+        </div>
+
+        <!-- Button to toggle display of the library -->
+        <button class="show-library-btn" id="showli" onclick="toggleLibrary()">Show Library</button>
+    </div>
+
+    <!-- Container for the library, initially hidden -->
+    <div class="library-container" style="display: none;">
+        <!-- Heading for the library section -->
+        <h2>Library</h2>
+        <!-- List of songs in the library -->
+        <ul class="library-list">
+            <!-- Each list item represents a song with play, like, and remove buttons -->
+            <li>Song 1&nbsp;&nbsp;<button class="play-btn" onclick="playLibrarySong(0)">Play</button>&nbsp;&nbsp;<button
+                    class="like-btn" onclick="addToLikedList(this)">Like</button>&nbsp;&nbsp;<button class="Remove-btn"
+                    onclick="removeToLikedList(this)">Remove</button>
+            </li>
+            <li>Song 2&nbsp;&nbsp;<button class="play-btn" onclick="playLibrarySong(1)">Play</button>&nbsp;&nbsp;<button
+                    class="like-btn" onclick="addToLikedList(this)">Like</button>&nbsp;&nbsp;<button class="Remove-btn"
+                    onclick="removeToLikedList(this)">Remove</button>
+            </li>
+            <li>Song 3&nbsp;&nbsp;<button class="play-btn" onclick="playLibrarySong(2)">Play</button>&nbsp;&nbsp;<button
+                    class="like-btn" onclick="addToLikedList(this)">Like</button>&nbsp;&nbsp;<button class="Remove-btn"
+                    onclick="removeToLikedList(this)">Remove</button>
+            </li>
+            <li>Song 4&nbsp;&nbsp;<button class="play-btn" onclick="playLibrarySong(3)">Play</button>&nbsp;&nbsp;<button
+                    class="like-btn" onclick="addToLikedList(this)">Like</button>&nbsp;&nbsp;<button class="Remove-btn"
+                    onclick="removeToLikedList(this)">Remove</button>
+            </li>
+            <li>Song 5&nbsp;&nbsp;<button class="play-btn" onclick="playLibrarySong(4)">Play</button>&nbsp;&nbsp;<button
+                    class="like-btn" onclick="addToLikedList(this)">Like</button>&nbsp;&nbsp;<button class="Remove-btn"
+                    onclick="removeToLikedList(this)">Remove</button>
+            </li>
+            <li>Song 6&nbsp;&nbsp;<button class="play-btn" onclick="playLibrarySong(5)">Play</button>&nbsp;&nbsp;<button
+                    class="like-btn" onclick="addToLikedList(this)">Like</button>&nbsp;&nbsp;<button class="Remove-btn"
+                    onclick="removeToLikedList(this)">Remove</button>
+            </li>
+            <li>Song 7&nbsp;&nbsp;<button class="play-btn" onclick="playLibrarySong(6)">Play</button>&nbsp;&nbsp;<button
+                    class="like-btn" onclick="addToLikedList(this)">Like</button>&nbsp;&nbsp;<button class="Remove-btn"
+                    onclick="removeToLikedList(this)">Remove</button>
+            </li>
+            <li>Song 8&nbsp;&nbsp;<button class="play-btn" onclick="playLibrarySong(7)">Play</button>&nbsp;&nbsp;<button
+                    class="like-btn" onclick="addToLikedList(this)">Like</button>&nbsp;&nbsp;<button class="Remove-btn"
+                    onclick="removeToLikedList(this)">Remove</button>
+            </li>
+        </ul>
+        <!-- Button to show liked songs -->
+        <button class="show-liked-btn" id="showli" onclick="toggleLikedSongs()">Show Liked Songs</button>
+    </div>
+    <!-- Liked Songs Section -->
+    <div class="liked-songs" style="display: none;">
+        <h2>Liked Songs</h2>
+        <ul class="liked-list">
+            <!-- Liked songs will be displayed here dynamically -->
+        </ul>
+    </div>
+    <audio id="audio" src=""></audio>
+    <script>
+        // Event listener for when the DOM content is loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            // Your existing JavaScript code
+        });
+
+        // Define library songs separately from the playlist
+        const librarySongs = [
+            { name: "Song 1", audioSrc: "song.mp3" }, // Song 1 with audio source
+            { name: "Song 2", audioSrc: "song1.mp3" }, // Song 2 with audio source
+            { name: "Song 3", audioSrc: "song2.mp3" }, // Song 3 with audio source
+            { name: "Song 4", audioSrc: "song3.mp3" }, // Song 4 with audio source
+            { name: "Song 5", audioSrc: "song4.mp3" }, // Song 5 with audio source
+            { name: "Song 6", audioSrc: "song5.mp3" }, // Song 6 with audio source
+            { name: "Song 7", audioSrc: "song6.mp3" }, // Song 7 with audio source
+            { name: "Song 8", audioSrc: "song7.mp3" }  // Song 8 with audio source
+        ];
+
+        // Define likedList variable
+        const likedList = [];
+
+        // Function to play a song from the library
+        function playLibrarySong(index) {
+            const song = librarySongs[index]; // Get the song at the specified index
+            const audio = document.getElementById("audio"); // Get the audio element
+            const imgContainer = document.querySelector(".img-container"); // Get the image container
+            const playpauseTrack = document.querySelector(".playpause-track i"); // Get the play/pause button
+            const seekSlider = document.querySelector(".seek_slider"); // Get the seek slider
+
+            // Set the audio source and play the song
+            audio.src = song.audioSrc;
+            audio.play();
+            imgContainer.style.animation = "rotate 5s linear infinite"; // Start rotating the image
+            playpauseTrack.className = "fa fa-pause-circle fa-3x"; // Change the play icon to pause
+
+            // Reset seek slider value to 0
+            seekSlider.value = 0;
+        }
+
+        // Function to add a song to the liked list
+        function addToLikedList(btn) {
+            const likedSongs = document.querySelector('.liked-list'); // Get the liked songs list
+            const songName = btn.parentElement.textContent.trim().slice(0, 6); // Get the name of the song
+
+            if (btn.classList.contains('liked')) {
+                // Remove from liked songs
+            } else {
+                // Add to liked songs
+                btn.classList.add('liked'); // Add 'liked' class to the button
+                const li = document.createElement('li'); // Create a new list item
+                li.setAttribute('data-name', songName); // Set data attribute for song name
+                li.textContent = songName; // Set text content to song name
+                likedSongs.appendChild(li); // Append the list item to the liked songs list
+            }
+        }
+
+        // Function to remove a song from the liked list
+        function removeToLikedList(btn) {
+            const likedSongs = document.querySelector('.liked-list'); // Get the liked songs list
+            const songName = btn.parentElement.textContent.trim().slice(0, 6); // Get the name of the song
+
+            // Check if the song is already liked
+            const existingLikedSong = likedSongs.querySelector(`li[data-name="${songName}"]`);
+
+            if (existingLikedSong) {
+                // Song is already liked, so remove it
+                existingLikedSong.remove();
+                // Remove 'liked' class from the corresponding button in the library list
+                const librarySong = document.querySelector(`.library-list li[data-name="${songName}"]`);
+                if (librarySong) {
+                    librarySong.querySelector('.like-btn').classList.remove('liked');
+                }
+            } else {
+                // Song is not liked, do nothing
+            }
+        }
+
+        // Function to toggle the display of liked songs
+        function toggleLikedSongs() {
+            const likedSongs = document.querySelector('.liked-songs'); // Get the liked songs container
+            likedSongs.style.display = (likedSongs.style.display === 'none') ? 'block' : 'none'; // Toggle the display style
+        }
+
+        // Function to toggle the display of the library
+        function toggleLibrary() {
+            const libraryContainer = document.querySelector('.library-container'); // Get the library container
+            libraryContainer.style.display = (libraryContainer.style.display === 'none') ? 'block' : 'none'; // Toggle the display style
+        }
+    </script>
+    <script>
+        // Event listener for when the DOM content is loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the necessary DOM elements
+            const audio = document.getElementById("audio");
+            const playpauseTrack = document.querySelector(".playpause-track i");
+            const imgContainer = document.querySelector(".img-container");
+            const volumeSlider = document.querySelector(".volume_slider");
+            const currenttime = document.querySelector(".current-time");
+            const seekSlider = document.querySelector(".seek_slider");
+
+            // Define the array of songs
+            const songs = [
+                { name: "song.mp3", displayName: "Song 1", artist: "Atanas Kolev", audioSrc: "song.mp3" },
+                { name: "song.mp3", displayName: "Song 2", artist: "Atanas Kolev", audioSrc: "song1.mp3" },
+                { name: "song.mp3", displayName: "Song 3", artist: "Atanas Kolev", audioSrc: "song2.mp3" },
+                { name: "song.mp3", displayName: "Song 4", artist: "Atanas Kolev", audioSrc: "song3.mp3" },
+                { name: "song.mp3", displayName: "Song 5", artist: "Atanas Kolev", audioSrc: "song4.mp3" },
+                { name: "song.mp3", displayName: "Song 6", artist: "Atanas Kolev", audioSrc: "song5.mp3" },
+                { name: "song.mp3", displayName: "Song 7", artist: "Atanas Kolev", audioSrc: "song6.mp3" },
+                { name: "song.mp3", displayName: "Song 8", artist: "Atanas Kolev", audioSrc: "song7.mp3" }
+            ];
+
+            // Initialize current song index
+            let currentSongIndex = 0;
+
+            // Function to play a song
+            function playSong() {
+                const song = songs[currentSongIndex];
+                audio.src = song.audioSrc;
+                audio.play();
+                imgContainer.style.animation = "rotate 5s linear infinite";
+                playpauseTrack.className = "fa fa-pause-circle fa-3x";
+
+                // Reset seek slider value to 0
+                seekSlider.value = 0;
+
+                // Display the total duration
+                audio.addEventListener("loadedmetadata", function () {
+                    currenttime.innerText = formatTime(audio.duration);
+                });
+
+                // Update the artist and song name
+                document.getElementById("artistName").textContent = song.artist;
+                document.getElementById("songName").textContent = song.displayName;
+            }
+
+            // Function to pause a song
+            function pauseSong() {
+                audio.pause();
+                imgContainer.style.animation = "";
+                playpauseTrack.className = "fa fa-play-circle fa-3x";
+            }
+
+            // Event listener for play/pause button
+            playpauseTrack.addEventListener("click", function () {
+                if (audio.paused) {
+                    playSong();
+                } else {
+                    pauseSong();
+                }
+            });
+
+            // Function to play the next song
+            function playNextSong() {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                playSong();
+            }
+
+            // Function to play the previous song
+            function playPrevSong() {
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                playSong();
+            }
+
+            // Event listeners for next and previous buttons
+            document.querySelector(".next-track").addEventListener("click", playNextSong);
+            document.querySelector(".prev-track").addEventListener("click", playPrevSong);
+
+            // Event listener for volume slider
+            volumeSlider.addEventListener("input", function () {
+                const volume = volumeSlider.value / 100;
+                audio.volume = volume;
+            });
+
+            // Event listener for seek slider
+            seekSlider.addEventListener("input", function () {
+                const seekTime = audio.duration * (seekSlider.value / 100);
+                audio.currentTime = seekTime;
+            });
+
+            // Update current time during playback
+            audio.addEventListener("timeupdate", function () {
+                const currentTime = audio.currentTime;
+                const totalDuration = audio.duration;
+                currenttime.innerText = formatTime(currentTime) + " / " + formatTime(totalDuration);
+
+                // Update the value of the seek slider
+                seekSlider.value = (currentTime / totalDuration) * 100;
+
+                // Check if the current song has ended
+                if (currentTime >= totalDuration) {
+                    playNextSong();
+                }
+            });
+
+            // Helper function to format time (in seconds) as MM:SS
+            function formatTime(time) {
+                const minutes = Math.floor(time / 60);
+                const seconds = Math.floor(time % 60);
+                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

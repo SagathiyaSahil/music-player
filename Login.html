@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+        }
+
+        form {
+            margin-top: 25px;
+            box-shadow: 0 0 10px white;
+            width: 250px;
+            background-color: black;
+            border: 1px solid white;
+            border-radius: 3px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            border: 1px solid white;
+            border-radius: 3px;
+            width: 85%;
+            padding: 10px;
+            margin: 8px;
+        }
+
+        input[type="submit"] {
+            background-color: skyblue;
+            color: black;
+            width: 93%;
+            padding: 10px;
+            margin: 8px;
+            border: 1px solid white;
+            border-radius: 3px;
+            font-size: medium;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="MP.html" onsubmit="return validateForm()" name="myForm">
+        <input type="text" id="User" placeholder="User name"><br>
+        <input type="text" id="Num" placeholder="Number"><br>
+        <input type="text" id="Ema" placeholder="Email"><br>
+        <input type="password" placeholder="Password" name="p"><br>
+        <input type="password" placeholder="Confirm Password" name="cp"><br>
+        <input type="submit" value="Login">
+    </form>
+
+    <script>
+        function validateForm() {
+            var patUser = /^[A-z_]+$/;
+            var patNum = /^\d{10}$/;
+            var patEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            var Checkuser = document.getElementById("User").value;
+            var Checknum = document.getElementById("Num").value;
+            var CheckEmail = document.getElementById("Ema").value;
+            var pass = document.forms["myForm"]["p"].value;
+            var copass = document.forms["myForm"]["cp"].value;
+
+            if (!patUser.test(Checkuser) || !patNum.test(Checknum) || !patEmail.test(CheckEmail)) {
+                alert("Please fill all fields correctly.");
+                return false;
+            }
+
+            if (pass !== copass) {
+                alert("Passwords do not match.");
+                return false;
+            }
+        }
+    </script>
+</body>
+
+</html>

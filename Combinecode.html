@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Music</title>
+    <!-- Add Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Your CSS styles here */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #232323;
+            /* Dark background color */
+            color: #ffffff;
+            /* White text color */
+        }
+
+        .container {
+            width: 100%;
+            padding: 20px;
+        }
+
+        #title {
+            color: #ffffff;
+            text-align: center;
+            font-size: 30px;
+            font-weight: 800;
+            margin-top: 3px;
+        }
+
+        nav {
+            background-color: #232323;
+            /* Dark background color */
+            color: #ffffff;
+            /* White text color */
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav li {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .player {
+            background-color: #333333;
+            /* Darker background for player */
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            height: 95vh;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Customize the colors for player controls */
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .buttons div {
+            display: inline-block;
+            margin: 0 10px;
+            cursor: pointer;
+            padding: 25px;
+            opacity: 0.8;
+        }
+
+        .buttons i {
+            color: #ffffff;
+        }
+
+        .buttons div:hover {
+            opacity: 1.0;
+            /* Change the opacity when mouse is hovered */
+        }
+
+        /* Customize the colors for sliders */
+        .slider_container {
+            margin-top: 20px;
+            text-align: center;
+            width: 75%;
+            max-width: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slider_container input[type="range"] {
+            width: 200px;
+            margin: 0 10px;
+            -webkit-appearance: none;
+            background-color: #666666;
+        }
+
+        .slider_container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        .slider_container input[type="range"]:hover {
+            opacity: 1.0;
+            /* Change the opacity when mouse is hovered */
+        }
+
+        /* Changing the font sizes to suitable ones */
+        .now-playing {
+            font-size: 1rem;
+        }
+
+        .track-name {
+            font-size: 3rem;
+        }
+
+        .track-artist {
+            font-size: 1.5rem;
+        }
+
+        .track-art {
+            margin: 25px;
+            height: 250px;
+            width: 250px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 60%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="title">My Music</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Songs</a></li>
+                <li><a href="#">Artists</a></li>
+                <li><a href="#">Albums</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="Login.html">Login</a></li>
+            </ul>
+        </nav>
+        <div class="player">
+            <div class="details">
+                <div class="now-playing">PLAYING x OF y</div>
+                <div class="track-art"></div>
+                <div class="track-name">Track Name</div>
+                <div class="track-artist">Track Artist</div>
+            </div>
+            <div class="buttons">
+                <div class="prev-track" onclick="prevTrack()">
+                    <i class="fa fa-step-backward fa-2x"></i>
+                </div>
+                <div class="playpause-track" onclick="playpauseTrack()">
+                    <i class="fa fa-play-circle fa-5x"></i>
+                </div>
+                <div class="next-track" onclick="nextTrack()">
+                    <i class="fa fa-step-forward fa-2x"></i>
+                </div>
+            </div>
+            <div class="slider_container">
+                <div class="current-time">00:00</div>
+                <input type="range" min="0" max="100" value="0" class="seek_slider" onchange="seekTo()">
+                <div class="total-duration">00:00</div>
+            </div>
+            <div class="slider_container">
+                <i class="fa fa-volume-down"></i>
+                <input type="range" min="0" max="100" value="100" class="volume_slider" onchange="setVolume()">
+                <i class="fa fa-volume-up"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript logic -->
+    <script>
+        const tracks = [
+            {
+                name: "Track 1",
+                artist: "Artist 1",
+                duration: "4:30",
+                audio: "song.mp3",
+                artwork: "img1.jpg"
+            },
+            // Add more tracks as needed
+        ];
+
+        let currentTrackIndex = 0;
+        const audio = new Audio(tracks[currentTrackIndex].audio);
+
+        function updateTrackDetails() {
+            const currentTrack = tracks[currentTrackIndex];
+            document.querySelector(".track-name").innerText = currentTrack.name;
+            document.querySelector(".track-artist").innerText = currentTrack.artist;
+            document.querySelector(".track-art").style.backgroundImage = `url('${currentTrack.artwork}')`;
+            document.querySelector(".total-duration").innerText = currentTrack.duration;
+        }
+
+        function playpauseTrack() {
+            if (audio.paused) {
+                audio.play();
+                document.querySelector(".playpause-track i").className = "fa fa-pause-circle fa-5x";
+            } else {
+                audio.pause();
+                document.querySelector(".playpause-track i").className = "fa fa-play-circle fa-5x";
+            }
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            audio.src = tracks[currentTrackIndex].audio;
+            playpauseTrack();
+            updateTrackDetails();
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            audio.src = tracks[currentTrackIndex].audio;
+            playpauseTrack();
+            updateTrackDetails();
+        }
+
+        function seekTo() {
+            const seekPosition = audio.duration * (document.querySelector(".seek_slider").value / 100);
+            audio.currentTime = seekPosition;
+        }
+
+        function setVolume() {
+            audio.volume = document.querySelector(".volume_slider").value / 100;
+        }
+
+        audio.addEventListener("timeupdate", function () {
+            const currentMinutes = Math.floor(audio.currentTime / 60);
+            const currentSeconds = Math.floor(audio.currentTime - currentMinutes * 60);
+            const durationMinutes = Math.floor(audio.duration / 60);
+            const durationSeconds = Math.floor(audio.duration - durationMinutes * 60);
+            document.querySelector(".current-time").innerText = `${currentMinutes}:${currentSeconds < 10 ? "0" : ""}${currentSeconds}`;
+        });
+
+        updateTrackDetails();
+    </script>
+</body>
+
+</html>

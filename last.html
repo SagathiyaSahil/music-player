@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Music Player with Bass Beat</title>
+</head>
+
+<body>
+    <h1>Website Music Player with Bass Beat</h1>
+    <audio id="audio" controls>
+        <source src="song2.mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <canvas id="visualizer" width="600" height="200"></canvas>
+
+    <button onclick="startAudio()">Play Audio</button>
+
+    <script>
+        let audioStarted = false;
+
+        function startAudio() {
+            const audio = document.getElementById("audio");
+            audio.play();
+            audioStarted = true;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const canvas = document.getElementById("visualizer");
+            const canvasCtx = canvas.getContext("2d");
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const analyser = audioCtx.createAnalyser();
+            const audio = document.getElementById("audio");
+
+            const source = audioCtx.createMediaElementSource(audio);
+
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+
+            analyser.fftSize = 256;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function drawVisualizer() {
+                canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const draw = () => {
+                    const WIDTH = canvas.width;
+                    const HEIGHT = canvas.height;
+
+                    analyser.getByteFrequencyData(dataArray);
+
+                    const barWidth = (WIDTH / bufferLength) * 2.5;
+                    let x = 0;
+
+                    for (let i = 0; i < bufferLength; i++) {
+                        const barHeight = dataArray[i];
+
+                        // Define the bass frequency range (you may need to adjust these values)
+                        const bassMinFrequency = 20; // Minimum bass frequency
+                        const bassMaxFrequency = 200; // Maximum bass frequency
+
+                        // Check if the current frequency falls within the bass range
+                        if (i >= bassMinFrequency && i <= bassMaxFrequency) {
+                            canvasCtx.fillStyle = "red"; // Color for bass frequencies
+                        } else {
+                            canvasCtx.fillStyle = "gray"; // Default color for other frequencies
+                        }
+
+                        canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
+
+                        x += barWidth + 1;
+                    }
+
+                    requestAnimationFrame(draw);
+                };
+
+                draw();
+            }
+
+            // Call drawVisualizer function when audio is started
+            audio.addEventListener("play", function () {
+                if (!audioStarted) {
+                    drawVisualizer();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
